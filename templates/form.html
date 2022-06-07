@@ -1,0 +1,9 @@
+<form method="post">
+    {% for f in fields %}
+        {% if f.type in ['SubmitField', 'CSRFTokenField'] %}
+            {{ f }}
+        {% else %}
+            {{ f.label }} {{ f(size=50) }}
+        {% endif %}
+    {% endfor %}
+</form>
