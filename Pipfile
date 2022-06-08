@@ -9,6 +9,7 @@ flask-wtf = "*"
 wtforms = "*"
 gitpython = "*"
 python-dotenv = "*"
+pygithub = "*"
 
 [dev-packages]
 

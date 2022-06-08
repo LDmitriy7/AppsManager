@@ -11,3 +11,4 @@ DB_HOST = os.environ.get('DB_HOST', 'localhost')
 DB_NAME = os.environ.get('DB_NAME', 'AppsManager')
 
 APP_PORT = int(os.environ.get('APP_PORT', 5001))
+GH_TOKEN = os.environ['GH_TOKEN']

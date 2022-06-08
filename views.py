@@ -13,9 +13,9 @@ def index():
         repo_url = form.repo_url.data
 
         try:
-            app_dir = api.clone_repo(repo_url)
+            app_dir = api.download_repo(repo_url)
         except ValueError as e:
-            flash(f'[error] {e.args[0]}')
+            flash(f'[error] {e}')
         else:
             api.deploy_app(app_dir)
             flash(f'[info] Deploying in progress...')

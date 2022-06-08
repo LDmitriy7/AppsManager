@@ -1,9 +1,14 @@
+import re
+import shutil
 import subprocess
+import tarfile
 from pathlib import Path
 
-import git
-from flask import render_template, Markup, get_flashed_messages, flash
+import requests
+from flask import render_template, Markup, get_flashed_messages
 from flask_wtf import FlaskForm
+from github import Github
+from github.GithubException import GithubException
 
 import config
 
@@ -20,25 +25,37 @@ def make_flashes() -> Markup:
     return Markup(text)
 
 
-def clone_repo(from_url: str, name: str = None) -> Path:
-    """Return path of cloned repo"""
-    repo_name = from_url.split('/')[-1].split('.')[0]
-    to_path = config.APPS_DIR / (name or repo_name)
+def _get_repo_download_url(repo_url: str):
+    match = re.search(r'/[\w-]+/[\w-]+', repo_url)
+    fullname = match.group(0).strip('/')
+    return Github(config.GH_TOKEN).get_repo(fullname).get_archive_link('tarball')
+
+
+def download_repo(repo_url: str, to_path: str = None):
+    """Return app dir of cloned repo"""
+    to_path = to_path or repo_url.split('/')[-1].removesuffix('.git')
 
     try:
-        git.Repo.clone_from(from_url, to_path)
-    except git.GitCommandError as e:
-        _desc: bytes = e.args[2]
-        desc = _desc.decode('utf-8').lower()
+        download_url = _get_repo_download_url(repo_url)
+    except (GithubException, AttributeError):
+        raise ValueError('Repository not found')
 
-        if 'already exists' in desc:
-            flash('[info] App already exists')
-        elif 'does not exist' in desc or 'repository not found' in desc:
-            raise ValueError('Repository not found')
-        else:
-            raise ValueError('Unknown error')
+    response = requests.get(download_url)
+    temp_name = 'temp.tar.gz'
 
-    return to_path
+    with open(temp_name, 'wb') as file:
+        file.write(response.content)
+
+    with tarfile.open(temp_name) as file:
+        file.extractall(config.APPS_DIR)
+
+        old_dir = config.APPS_DIR / file.getnames()[0]
+        new_dir = config.APPS_DIR / to_path
+
+    shutil.rmtree(new_dir, ignore_errors=True)
+    shutil.move(old_dir, new_dir)
+
+    return new_dir
 
 
 def deploy_app(app_dir: str | Path, compose_file='docker-compose.yml'):
