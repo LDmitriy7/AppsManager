@@ -22,5 +22,5 @@ python3.10 -m venv venv &&
   echo "$UNIT_TEXT" >"/etc/systemd/system/$UNIT_NAME.service" &&
   systemctl daemon-reload &&
   systemctl enable $UNIT_NAME &&
-  systemctl start $UNIT_NAME &&
+  systemctl restart $UNIT_NAME &&
   systemctl status $UNIT_NAME
