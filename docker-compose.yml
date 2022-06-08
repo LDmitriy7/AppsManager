@@ -3,10 +3,10 @@ services:
     build: .
     restart: always
     environment:
-      - DB_HOST=mongo
-      - APP_PORT=5051
-      - APPS_DIR=/root/apps
-    network_mode: "host"
+      DB_HOST: mongo
+      APP_PORT: 5051
+      APPS_DIR: /root/apps
+    network_mode: host
     volumes:
       - /root/apps:/root/apps
   mongo:
