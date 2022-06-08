@@ -7,4 +7,4 @@ RUN pip install pipenv && pipenv requirements > requirements.txt && pip install 
 
 COPY . .
 
-CMD python .
+CMD python __main__.py
