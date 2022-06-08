@@ -10,6 +10,7 @@ wtforms = "*"
 gitpython = "*"
 python-dotenv = "*"
 pygithub = "*"
+docker = "*"
 
 [dev-packages]
 
