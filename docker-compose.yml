@@ -5,8 +5,8 @@ services:
     environment:
       - DB_HOST=mongo
       - APP_PORT=5051
-    ports:
-      - 5051:5051
+    networks:
+      - host
   mongo:
     image: mongo
     restart: always
