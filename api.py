@@ -60,6 +60,12 @@ def download_repo(repo_url: str, to_path: str = None):
     return new_dir
 
 
-def deploy_app(app_dir: str | Path, compose_file='docker-compose.yml'):
-    cmd = f'docker compose -f {compose_file} build && docker compose -f {compose_file} up &'
+def make_env(app_dir: Path, env_string: str, sep=';'):
+    with open(app_dir / '.env', 'w') as file:
+        strings = [v.strip() for v in env_string.split(sep)]
+        file.write('\n'.join(strings))
+
+
+def deploy_app(app_dir: str | Path):
+    cmd = f'docker compose build && docker compose up &'
     subprocess.run(cmd, shell=True, cwd=app_dir)

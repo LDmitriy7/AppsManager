@@ -3,7 +3,7 @@
         {% if f.type in ['SubmitField', 'CSRFTokenField'] %}
             {{ f }}
         {% else %}
-            {{ f.label }} {{ f(size=50) }}
+            <p>{{ f.label }} {{ f(size=50) }}</p>
         {% endif %}
     {% endfor %}
 </form>

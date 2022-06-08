@@ -10,13 +10,12 @@ def index():
     form = forms.Deploy()
 
     if form.validate_on_submit():
-        repo_url = form.repo_url.data
-
         try:
-            app_dir = api.download_repo(repo_url)
+            app_dir = api.download_repo(form.repo_url.data)
         except ValueError as e:
             flash(f'[error] {e}')
         else:
+            api.make_env(app_dir, form.env_string.data)
             api.deploy_app(app_dir)
             flash(f'[info] Deploying in progress...')
 
