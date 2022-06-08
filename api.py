@@ -1,3 +1,4 @@
+import os
 import re
 import shutil
 import subprocess
@@ -53,6 +54,7 @@ def download_repo(repo_url: str, to_path: str = None):
         new_dir = config.APPS_DIR / to_path
 
     shutil.rmtree(new_dir, ignore_errors=True)
+    os.remove(temp_name)
     shutil.move(old_dir, new_dir)
 
     return new_dir
