@@ -48,7 +48,26 @@ def download_repo(repo_url: str, to_path: str = None):
         file.write(response.content)
 
     with tarfile.open(temp_name) as file:
-        file.extractall(config.APPS_DIR)
+        def is_within_directory(directory, target):
+            
+            abs_directory = os.path.abspath(directory)
+            abs_target = os.path.abspath(target)
+        
+            prefix = os.path.commonprefix([abs_directory, abs_target])
+            
+            return prefix == abs_directory
+        
+        def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+        
+            for member in tar.getmembers():
+                member_path = os.path.join(path, member.name)
+                if not is_within_directory(path, member_path):
+                    raise Exception("Attempted Path Traversal in Tar File")
+        
+            tar.extractall(path, members, numeric_owner=numeric_owner) 
+            
+        
+        safe_extract(file, config.APPS_DIR)
 
         old_dir = config.APPS_DIR / file.getnames()[0]
         new_dir = config.APPS_DIR / to_path
